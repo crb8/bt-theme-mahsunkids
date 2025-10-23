@@ -1,0 +1,52 @@
+/* Overrides do cliente mahsunkids — escopo por data-bt */
+:root[data-bt='mahsunkids'] {
+  --bt-bg: #fff;
+  --bt-surface: #151922;
+  --bt-text: #111;
+  --bt-border: #2a3240;
+  --bt-black: #111;
+}
+
+:root[data-bt='mahsunkids'],
+:root[data-bt='mahsunkids'] body {
+  background: var(--bt-bg);
+  color: var(--bt-text);
+}
+
+:root[data-bt='mahsunkids'] .header,
+:root[data-bt='mahsunkids'] .menu {
+  background: var(--bt-surface);
+  border-bottom: 1px solid var(--bt-border);
+}
+
+/* adicione seletores específicos conforme necessário */
+
+#frm-search button[type='submit'] {
+  background-color: var(--bt-black, #111) !important;
+  border-color: var(--bt-black, #111) !important;
+  color: #f5f5f5 !important;
+}
+
+div.header-bottom.bg-footer-default-color #nav-root {
+  display: flex;
+  justify-content: space-between !important;
+}
+
+div.header-bottom.bg-footer-default-color #nav-root li {
+  text-transform: uppercase !important;
+}
+
+/* Banner página categorias */
+.imagem-banner {
+  img {
+    width: 100% !important;
+    max-width: 1240px !important;
+  }
+}
+
+.informacoes-compra-produto {
+  h1 {
+    font-weight: 700 !important;
+    padding-top: 10px !important;
+  }
+}

@@ -1,0 +1,49 @@
+# -------------------------------------------------------------------
+# 🌐 Normaliza finais de linha para consistência entre sistemas
+# -------------------------------------------------------------------
+
+# Todos os arquivos de texto usarão LF no repositório
+* text eol=lf
+
+# Scripts e configs mantêm LF (melhor para CI/CD e Linux)
+*.sh text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.json text eol=lf
+*.js text eol=lf
+*.ts text eol=lf
+*.css text eol=lf
+*.html text eol=lf
+*.md text eol=lf
+
+# Windows-friendly para batch/PowerShell
+*.bat text eol=crlf
+*.cmd text eol=crlf
+*.ps1 text eol=crlf
+
+# Binários (sem conversão)
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.webp binary
+*.svg binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.otf binary
+*.ico binary
+*.zip binary
+*.gz binary
+*.tgz binary
+*.mp3 binary
+*.mp4 binary
+*.mov binary
+*.pdf binary
+
+# -------------------------------------------------------------------
+# 🔧 Dica:
+# após criar este arquivo, rode:
+# git add --renormalize .
+# git commit -m "Normalize line endings with .gitattributes"
+# -------------------------------------------------------------------

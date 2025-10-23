@@ -1,0 +1,12 @@
+{
+  "name": "bt-theme-mahsunkids",
+  "version": "1.0.0",
+  "description": "BT Theme customizations for MahsunKids",
+  "main": "dist/bt-overrides.mahsunkids.v1.css",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/crb8/bt-theme-mahsunkids.git"
+  },
+  "author": "Christian Bona",
+  "license": "MIT"
+}
