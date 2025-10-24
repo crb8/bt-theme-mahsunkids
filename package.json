@@ -1,12 +1,21 @@
 {
   "name": "bt-theme-mahsunkids",
   "version": "1.0.0",
+  "type": "module",
+  "private": false,
   "description": "BT Theme customizations for MahsunKids",
   "main": "dist/bt-overrides.mahsunkids.v1.css",
+  "scripts": {
+    "build": "vite build",
+    "release:prep": "npm run build && git add dist && git commit -m \"build(theme-mahsunkids): dist for release\" || echo nochange"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/crb8/bt-theme-mahsunkids.git"
   },
   "author": "Christian Bona",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "vite": "^5.4.0"
+  }
 }
