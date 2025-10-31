@@ -1,8 +1,14 @@
 // ===== HEADER TRANSPARENTE - MAHUNKIDS =====
+
+// Helper para logs condicionais (sincronizado com boot/index.js)
+const DEV = false; // produção
+const log = (...args) => DEV && console.log(...args);
+const warn = (...args) => DEV && console.warn(...args);
+
 export async function mount(root, ctx) {
   'use strict';
 
-  console.log('[bt-mahsunkids] 🚀 Script de header carregado!');
+  log('[bt-mahsunkids] 🚀 Script de header carregado!');
 
   // Função para aguardar header aparecer no DOM
   function waitForHeader(maxAttempts = 50, interval = 100) {
@@ -12,7 +18,7 @@ export async function mount(root, ctx) {
         attempts++;
         const header = document.querySelector('#header-react-app');
         if (header) {
-          console.log('[bt-mahsunkids] ✅ Header encontrado após', attempts, 'tentativas');
+          log('[bt-mahsunkids] ✅ Header encontrado após', attempts, 'tentativas');
           resolve(header);
           return;
         }
@@ -38,10 +44,10 @@ export async function mount(root, ctx) {
   // Verifica se já está disponível ou aguarda
   const existingHeader = document.querySelector('#header-react-app');
   if (existingHeader) {
-    console.log('[bt-mahsunkids] ✅ Header já disponível, iniciando...');
+    log('[bt-mahsunkids] ✅ Header já disponível, iniciando...');
     init(existingHeader);
   } else {
-    console.log('[bt-mahsunkids] ⏳ Aguardando header aparecer...');
+    log('[bt-mahsunkids] ⏳ Aguardando header aparecer...');
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', initWhenReady);
     } else {
@@ -50,14 +56,14 @@ export async function mount(root, ctx) {
   }
 
   function init(header) {
-    console.log('[bt-mahsunkids] ✅ Iniciando configuração do header...');
+    log('[bt-mahsunkids] ✅ Iniciando configuração do header...');
 
     if (!header) {
       console.error('[bt-mahsunkids] ❌ Header não fornecido!');
       return;
     }
 
-    console.log('[bt-mahsunkids] ✅ Header recebido:', header);
+    log('[bt-mahsunkids] ✅ Header recebido:', header);
 
     // ===== CONFIGURAÇÃO =====
     const CONFIG = {
@@ -93,11 +99,10 @@ export async function mount(root, ctx) {
         return (
           path === allowed ||
           path === allowed + '/' ||
-          path.startsWith(allowed + '/') ||
-          path.includes(allowed)
+          path.startsWith(allowed + '/')
         );
       });
-      console.log('[bt-mahsunkids] 🔍 Página:', path, '| Permitida?', isAllowed);
+      log('[bt-mahsunkids] 🔍 Página:', path, '| Permitida?', isAllowed);
       return isAllowed;
     }
 
@@ -127,7 +132,7 @@ export async function mount(root, ctx) {
       const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
       const shouldBeTransparent = shouldApplyTransparentHeader();
 
-      console.log(
+      log(
         '[bt-mahsunkids] 📊 Scroll:',
         scrollTop,
         '| Deve ser transparente?',
@@ -138,7 +143,7 @@ export async function mount(root, ctx) {
       if (!shouldBeTransparent) {
         header.classList.add('header-scrolled');
         header.style.backgroundColor = '#ffffff';
-        console.log('[bt-mahsunkids] ✅ Header BRANCO (página não permitida)');
+        log('[bt-mahsunkids] ✅ Header BRANCO (página não permitida)');
         return;
       }
 
@@ -146,11 +151,11 @@ export async function mount(root, ctx) {
       if (scrollTop > CONFIG.scrollThreshold) {
         header.classList.add('header-scrolled');
         header.style.backgroundColor = '#ffffff';
-        console.log('[bt-mahsunkids] ✅ Header BRANCO (scrolled)');
+        log('[bt-mahsunkids] ✅ Header BRANCO (scrolled)');
       } else {
         header.classList.remove('header-scrolled');
         header.style.backgroundColor = 'transparent';
-        console.log('[bt-mahsunkids] ✅ Header TRANSPARENTE');
+        log('[bt-mahsunkids] ✅ Header TRANSPARENTE');
       }
     }
 
@@ -173,7 +178,7 @@ export async function mount(root, ctx) {
     // Adiciona classe ao body
     if (shouldApplyTransparentHeader()) {
       document.body.classList.add('has-transparent-header');
-      console.log('[bt-mahsunkids] ✅ Classe "has-transparent-header" adicionada');
+      log('[bt-mahsunkids] ✅ Classe "has-transparent-header" adicionada');
     }
 
     // ===== FORÇA CORES DOS SUBMENUS =====
@@ -191,7 +196,7 @@ export async function mount(root, ctx) {
 
 // ===== BANNERS CARROSSEL (OVERLAY) =====
 export async function initBannerOverlay() {
-  console.log('[bt-mahsunkids] 🎨 Iniciando overlay de banners...');
+  log('[bt-mahsunkids] 🎨 Iniciando overlay de banners...');
 
   const OVERLAY_CONFIG = {
     enabled: true,
@@ -207,8 +212,7 @@ export async function initBannerOverlay() {
       return (
         path === allowed ||
         path === allowed + '/' ||
-        path.startsWith(allowed + '/') ||
-        path.includes(allowed)
+        path.startsWith(allowed + '/')
       );
     });
   }
@@ -222,7 +226,7 @@ export async function initBannerOverlay() {
   }
 
   if (!shouldApplyOverlay()) {
-    console.log('[bt-mahsunkids] ❌ Overlay não será aplicado nesta página');
+    log('[bt-mahsunkids] ❌ Overlay não será aplicado nesta página');
     return;
   }
 
@@ -234,7 +238,7 @@ export async function initBannerOverlay() {
         overlay.className = 'banner-overlay';
         overlay.style.backgroundColor = `rgba(${OVERLAY_CONFIG.color}, ${OVERLAY_CONFIG.opacity})`;
         slide.appendChild(overlay);
-        console.log('[bt-mahsunkids] ✅ Overlay aplicado');
+        log('[bt-mahsunkids] ✅ Overlay aplicado');
       }
     });
   }

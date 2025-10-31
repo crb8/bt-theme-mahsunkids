@@ -1,4 +1,4 @@
-name: Build & Publish bt-theme-mizz (jsDelivr)
+name: Build & Publish bt-theme-mahsunkids (jsDelivr)
 
 on:
   push:
@@ -54,5 +54,5 @@ jobs:
       - name: Purge jsDelivr cache
         if: steps.commitdist.outputs.changed == 'true'
         run: |
-          curl -s "https://purge.jsdelivr.net/gh/crb8/bt-theme-mizz@main/dist/bt-overrides.mizz.v1.css"
-          curl -s "https://purge.jsdelivr.net/gh/crb8/bt-theme-mizz@main/dist/"
+          curl -s "https://purge.jsdelivr.net/gh/crb8/bt-theme-mahsunkids@main/dist/bt-overrides.mahsunkids.v1.css"
+          curl -s "https://purge.jsdelivr.net/gh/crb8/bt-theme-mahsunkids@main/dist/"

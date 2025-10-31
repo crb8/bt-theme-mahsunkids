@@ -1,5 +1,9 @@
 const DEV = false; // produção
 
+// Helper para logs condicionais
+const log = (...args) => DEV && console.log(...args);
+const warn = (...args) => DEV && console.warn(...args);
+
 // bt-boot - loader específico para Mahsunkids
 if (!window.__btInit) {
   window.__btInit = true;
@@ -9,8 +13,8 @@ if (!window.__btInit) {
 
     // Validação de domínio específico
     const allowedHosts = ['mahsunkids.com.br', 'www.mahsunkids.com.br'];
-    if (!allowedHosts.some(allowed => host.includes(allowed))) {
-      console.warn('[bt-theme-mahsunkids] Domínio não autorizado:', host);
+    if (!allowedHosts.some(allowed => host === allowed || host.endsWith('.' + allowed))) {
+      warn('[bt-theme-mahsunkids] Domínio não autorizado:', host);
       return;
     }
 
@@ -45,7 +49,7 @@ if (!window.__btInit) {
       document.head.append(themePre, themeLink);
 
       // Importar e inicializar header transparente
-      console.log('[bt-mahsunkids] 🔄 Iniciando import do header...');
+      log('[bt-mahsunkids] 🔄 Iniciando import do header...');
       try {
         // ✅ IMPORTANTE: Import dinâmico com string literal para o Vite detectar durante o build
         // O Vite vai gerar: chunks/mahsunkids-header.js
@@ -56,29 +60,29 @@ if (!window.__btInit) {
         if (DEV) {
           // Dev: usar import relativo (string literal para Vite detectar e gerar chunk)
           headerModule = await import('../blocks/header.js');
-          console.log('[bt-mahsunkids] 🔗 Import relativo usado (dev mode)');
+          log('[bt-mahsunkids] 🔗 Import relativo usado (dev mode)');
         } else {
           // Prod: sempre usar caminho absoluto do Worker (chunk já foi gerado pelo Vite)
           // Como o boot loader é servido pelo Worker, usar import.meta.url para construir a URL base
           const headerUrl = new URL('/bt/chunks/mahsunkids-header.js', import.meta.url).href;
-          console.log('[bt-mahsunkids] 🔗 URL do header (Worker):', headerUrl);
-          console.log('[bt-mahsunkids] 🔗 import.meta.url base:', import.meta.url);
+          log('[bt-mahsunkids] 🔗 URL do header (Worker):', headerUrl);
+          log('[bt-mahsunkids] 🔗 import.meta.url base:', import.meta.url);
           headerModule = await import(headerUrl);
         }
 
-        console.log('[bt-mahsunkids] 📦 Header module carregado:', headerModule);
-        console.log('[bt-mahsunkids] 📋 Funções disponíveis:', Object.keys(headerModule));
+        log('[bt-mahsunkids] 📦 Header module carregado:', headerModule);
+        log('[bt-mahsunkids] 📋 Funções disponíveis:', Object.keys(headerModule));
         if (typeof headerModule.mount === 'function') {
-          console.log('[bt-mahsunkids] ✅ Função mount encontrada, executando...');
+          log('[bt-mahsunkids] ✅ Função mount encontrada, executando...');
           // Monta header (não precisa de elemento raiz específico)
           await headerModule.mount(document.body, { tenant, host });
-          console.log('[bt-mahsunkids] ✅ Header mount executado');
+          log('[bt-mahsunkids] ✅ Header mount executado');
         } else {
-          console.warn('[bt-mahsunkids] ⚠️ Função mount NÃO encontrada no módulo');
+          warn('[bt-mahsunkids] ⚠️ Função mount NÃO encontrada no módulo');
         }
         if (typeof headerModule.initBannerOverlay === 'function') {
           await headerModule.initBannerOverlay();
-          console.log('[bt-mahsunkids] ✅ Banner overlay inicializado');
+          log('[bt-mahsunkids] ✅ Banner overlay inicializado');
         }
       } catch (err) {
         console.error('[bt-mahsunkids] ❌ Erro ao carregar header:', err);
@@ -98,7 +102,7 @@ if (!window.__btInit) {
         } else if (kind === 'carousel') {
           mod = await carouselModule();
         } else {
-          console.warn('[bt-theme-mahsunkids] Bloco desconhecido:', kind);
+          warn('[bt-theme-mahsunkids] Bloco desconhecido:', kind);
           return;
         }
         if (typeof mod.mount === 'function') mod.mount(el, { tenant, host });
