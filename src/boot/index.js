@@ -47,7 +47,10 @@ if (!window.__btInit) {
       // Importar e inicializar header transparente
       console.log('[bt-mahsunkids] 🔄 Iniciando import do header...');
       try {
-        const headerModule = await import('../blocks/header.js');
+        // Usar caminho absoluto do Worker (como os CSS)
+        const headerUrl = new URL('/bt/chunks/mahsunkids-header.js', import.meta.url).href;
+        console.log('[bt-mahsunkids] 🔗 URL do header:', headerUrl);
+        const headerModule = await import(headerUrl);
         console.log('[bt-mahsunkids] 📦 Header module carregado:', headerModule);
         console.log('[bt-mahsunkids] 📋 Funções disponíveis:', Object.keys(headerModule));
         if (typeof headerModule.mount === 'function') {
