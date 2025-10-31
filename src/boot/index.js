@@ -1,8 +1,9 @@
-const DEV = false; // produção
+const DEV = false; // produção - SEMPRE false para Worker usar URLs absolutas
+const DEBUG_LOGS = true; // DEBUG - ativa logs no console
 
 // Helper para logs condicionais
-const log = (...args) => DEV && console.log(...args);
-const warn = (...args) => DEV && console.warn(...args);
+const log = (...args) => DEBUG_LOGS && console.log(...args);
+const warn = (...args) => DEBUG_LOGS && console.warn(...args);
 
 // bt-boot - loader específico para Mahsunkids
 if (!window.__btInit) {

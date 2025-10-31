@@ -1,9 +1,10 @@
 // ===== HEADER TRANSPARENTE - MAHUNKIDS =====
 
 // Helper para logs condicionais (sincronizado com boot/index.js)
-const DEV = false; // produção
-const log = (...args) => DEV && console.log(...args);
-const warn = (...args) => DEV && console.warn(...args);
+const DEV = false; // produção - não usado aqui
+const DEBUG_LOGS = true; // DEBUG - ativa logs no console
+const log = (...args) => DEBUG_LOGS && console.log(...args);
+const warn = (...args) => DEBUG_LOGS && console.warn(...args);
 
 export async function mount(root, ctx) {
   'use strict';
