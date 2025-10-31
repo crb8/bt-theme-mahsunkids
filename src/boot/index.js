@@ -49,19 +49,23 @@ if (!window.__btInit) {
       try {
         // ✅ IMPORTANTE: Import dinâmico com string literal para o Vite detectar durante o build
         // O Vite vai gerar: chunks/mahsunkids-header.js
-        // Em prod (Worker), usamos URL absoluta; em dev, o Vite resolve relativamente
+        // Em prod, sempre usar URL absoluta do Worker (boot loader é sempre servido pelo Worker)
+        // Em dev, usar import relativo para o Vite resolver durante desenvolvimento
         let headerModule;
-        
-        if (!DEV && import.meta.url.includes('workers.dev')) {
-          // Prod: usar caminho absoluto do Worker (chunk já foi gerado pelo Vite)
+
+        if (DEV) {
+          // Dev: usar import relativo (string literal para Vite detectar e gerar chunk)
+          headerModule = await import('../blocks/header.js');
+          console.log('[bt-mahsunkids] 🔗 Import relativo usado (dev mode)');
+        } else {
+          // Prod: sempre usar caminho absoluto do Worker (chunk já foi gerado pelo Vite)
+          // Como o boot loader é servido pelo Worker, usar import.meta.url para construir a URL base
           const headerUrl = new URL('/bt/chunks/mahsunkids-header.js', import.meta.url).href;
           console.log('[bt-mahsunkids] 🔗 URL do header (Worker):', headerUrl);
+          console.log('[bt-mahsunkids] 🔗 import.meta.url base:', import.meta.url);
           headerModule = await import(headerUrl);
-        } else {
-          // Dev: usar import relativo (string literal para Vite detectar)
-          headerModule = await import('../blocks/header.js');
         }
-        
+
         console.log('[bt-mahsunkids] 📦 Header module carregado:', headerModule);
         console.log('[bt-mahsunkids] 📋 Funções disponíveis:', Object.keys(headerModule));
         if (typeof headerModule.mount === 'function') {
