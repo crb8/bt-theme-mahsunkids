@@ -180,9 +180,15 @@
     z-index: 2;
   }
 
-  /* ===== GARANTIA DE TRANSPARÊNCIA ===== */
-  .ra-header.flex.w-full.flex-col.header-21.header-fixed {
+  /* ===== GARANTIA DE TRANSPARÊNCIA (APENAS QUANDO NÃO SCROLLADO) ===== */
+  body.has-transparent-header .ra-header.flex.w-full.flex-col.header-21.header-fixed:not(.header-scrolled) {
     background-color: transparent !important;
+  }
+
+  /* ===== FORÇA BRANCO QUANDO SCROLLADO ===== */
+  body.has-transparent-header .ra-header.flex.w-full.flex-col.header-21.header-fixed.header-scrolled,
+  .ra-header.flex.w-full.flex-col.header-21.header-fixed.header-scrolled {
+    background-color: #ffffff !important;
   }
 
   /* ===== DARK MODE ===== */
@@ -201,7 +207,4 @@
   body.has-transparent-header .componente-id-XCTocaQYtm {
     margin-top: 67px !important;
   }
-}
-#nav-root {
-  border: solid orange 1px;
 }
