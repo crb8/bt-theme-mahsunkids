@@ -18,7 +18,7 @@ export default defineConfig({
           }
           return '[name].js';
         },
-        chunkFileNames: 'chunks/[name].js',
+        chunkFileNames: 'chunks/mahsunkids-[name].js',
         assetFileNames: assetInfo => {
           if (assetInfo.name?.endsWith('.css')) {
             return 'bt-overrides.mahsunkids.v1.css';
