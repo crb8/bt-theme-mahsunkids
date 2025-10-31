@@ -57,14 +57,14 @@ export async function mount(root, ctx) {
   }
 
   function init(header) {
-    log('[bt-mahsunkids] ✅ Iniciando configuração do header...');
+    console.log('[bt-mahsunkids] ✅ Iniciando configuração do header...');
 
     if (!header) {
       console.error('[bt-mahsunkids] ❌ Header não fornecido!');
       return;
     }
 
-    log('[bt-mahsunkids] ✅ Header recebido:', header);
+    console.log('[bt-mahsunkids] ✅ Header recebido:', header);
 
     // ===== CONFIGURAÇÃO =====
     const CONFIG = {
@@ -96,14 +96,18 @@ export async function mount(root, ctx) {
     // ===== DETECTA PÁGINA PERMITIDA =====
     function isAllowedPage() {
       const path = window.location.pathname;
+      console.log('[bt-mahsunkids] 🔍 Verificando página:', path);
+      console.log('[bt-mahsunkids] 📋 Páginas permitidas:', CONFIG.allowedPages);
+
       const isAllowed = CONFIG.allowedPages.some((allowed) => {
-        return (
-          path === allowed ||
-          path === allowed + '/' ||
-          path.startsWith(allowed + '/')
-        );
+        const exactMatch = path === allowed;
+        const withSlash = path === allowed + '/';
+        const startsWith = path.startsWith(allowed + '/');
+        console.log(`[bt-mahsunkids]   Testando "${allowed}": exact=${exactMatch}, withSlash=${withSlash}, startsWith=${startsWith}`);
+        return exactMatch || withSlash || startsWith;
       });
-      log('[bt-mahsunkids] 🔍 Página:', path, '| Permitida?', isAllowed);
+
+      console.log('[bt-mahsunkids] 🎯 Resultado final: Página', isAllowed ? 'PERMITIDA ✅' : 'NÃO PERMITIDA ❌');
       return isAllowed;
     }
 
@@ -177,9 +181,14 @@ export async function mount(root, ctx) {
     });
 
     // Adiciona classe ao body
-    if (shouldApplyTransparentHeader()) {
+    const shouldAdd = shouldApplyTransparentHeader();
+    console.log('[bt-mahsunkids] 🎯 Deve adicionar classe "has-transparent-header"?', shouldAdd);
+    if (shouldAdd) {
       document.body.classList.add('has-transparent-header');
-      log('[bt-mahsunkids] ✅ Classe "has-transparent-header" adicionada');
+      console.log('[bt-mahsunkids] ✅ Classe "has-transparent-header" ADICIONADA ao body');
+      console.log('[bt-mahsunkids] 📋 Classes do body:', document.body.className);
+    } else {
+      console.warn('[bt-mahsunkids] ⚠️ Classe "has-transparent-header" NÃO foi adicionada (página não permitida)');
     }
 
     // ===== FORÇA CORES DOS SUBMENUS =====
