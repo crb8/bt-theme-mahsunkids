@@ -6,18 +6,27 @@ const log = (...args) => DEBUG_LOGS && console.log(...args);
 const warn = (...args) => DEBUG_LOGS && console.warn(...args);
 
 // bt-boot - loader específico para Mahsunkids
+console.log('[bt-mahsunkids] ✅ Script boot carregado!');
+
 if (!window.__btInit) {
   window.__btInit = true;
 
   (async () => {
     const host = location.hostname;
+    console.log('[bt-mahsunkids] 🌐 Hostname detectado:', host);
 
     // Validação de domínio específico
     const allowedHosts = ['mahsunkids.com.br', 'www.mahsunkids.com.br'];
-    if (!allowedHosts.some(allowed => host === allowed || host.endsWith('.' + allowed))) {
-      warn('[bt-theme-mahsunkids] Domínio não autorizado:', host);
+    const isAllowed = allowedHosts.some(allowed => host === allowed || host.endsWith('.' + allowed));
+    console.log('[bt-mahsunkids] 🔒 Validação de domínio:', isAllowed ? 'PASSOU ✅' : 'BLOQUEADO ❌');
+
+    if (!isAllowed) {
+      console.warn('[bt-theme-mahsunkids] ⛔ Domínio não autorizado:', host);
+      console.warn('[bt-theme-mahsunkids] 📋 Domínios permitidos:', allowedHosts);
       return;
     }
+
+    console.log('[bt-mahsunkids] 🚀 Iniciando carregamento do tema...');
 
     try {
       const tenant = 'mahsunkids';
