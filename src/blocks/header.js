@@ -63,7 +63,8 @@ export async function mount(root, ctx) {
     const CONFIG = {
       transparentHeader: true,
       onlyHomePage: true,
-      allowedPages: ['/mah-sun-kids', '/teste', '/home-nova'],
+      // Apenas a página /mah-sun-kids pode ter header transparente
+      allowedPages: ['/mah-sun-kids'],
       scrollThreshold: 50,
     };
 
@@ -89,15 +90,15 @@ export async function mount(root, ctx) {
     // ===== DETECTA PÁGINA PERMITIDA =====
     function isAllowedPage() {
       const path = window.location.pathname;
+      // Apenas /mah-sun-kids ou /mah-sun-kids/ (com ou sem barra no final)
+      // Aceita também query strings: /mah-sun-kids?zord=true
+      const normalizedPath = path.replace(/\/$/, ''); // Remove barra final
       const isAllowed = CONFIG.allowedPages.some((allowed) => {
-        return (
-          path === allowed ||
-          path === allowed + '/' ||
-          path.startsWith(allowed + '/') ||
-          path.includes(allowed)
-        );
+        const normalizedAllowed = allowed.replace(/\/$/, '');
+        // Match exato ou com query string
+        return normalizedPath === normalizedAllowed || normalizedPath.startsWith(normalizedAllowed + '?');
       });
-      console.log('[bt-mahsunkids] 🔍 Página:', path, '| Permitida?', isAllowed);
+      console.log('[bt-mahsunkids] 🔍 Página:', path, '| Normalizada:', normalizedPath, '| Permitida?', isAllowed);
       return isAllowed;
     }
 
@@ -125,11 +126,11 @@ export async function mount(root, ctx) {
       // Remove qualquer estilo que possa estar forçando transparência
       header.style.removeProperty('background');
       header.style.removeProperty('background-color');
-      
+
       // Aplica fundo branco com !important usando múltiplas propriedades
       header.style.setProperty('background-color', '#ffffff', 'important');
       header.style.setProperty('background', '#ffffff', 'important');
-      
+
       // Também aplica no header-top se existir
       const headerTop = header.querySelector('.header-top');
       if (headerTop) {
@@ -138,15 +139,15 @@ export async function mount(root, ctx) {
         headerTop.style.setProperty('background-color', '#ffffff', 'important');
         headerTop.style.setProperty('background', '#ffffff', 'important');
       }
-      
+
       // Garante que a classe está presente ANTES de aplicar estilos
       if (!header.classList.contains('header-scrolled')) {
         header.classList.add('header-scrolled');
       }
-      
+
       // Força reflow para garantir aplicação
       header.offsetHeight;
-      
+
       console.log('[bt-mahsunkids] ✅ Fundo branco FORÇADO | Classes:', header.className);
     }
 
@@ -156,22 +157,22 @@ export async function mount(root, ctx) {
       header.style.removeProperty('background');
       header.style.setProperty('background-color', 'transparent', 'important');
       header.style.setProperty('background', 'transparent', 'important');
-      
+
       const headerTop = header.querySelector('.header-top');
       if (headerTop) {
         headerTop.style.removeProperty('background');
         headerTop.style.setProperty('background-color', 'transparent', 'important');
         headerTop.style.setProperty('background', 'transparent', 'important');
       }
-      
+
       // Remove classe ANTES de aplicar estilos
       if (header.classList.contains('header-scrolled')) {
         header.classList.remove('header-scrolled');
       }
-      
+
       // Força reflow
       header.offsetHeight;
-      
+
       console.log('[bt-mahsunkids] ✅ Transparência FORÇADA | Classes:', header.className);
     }
 
@@ -218,15 +219,15 @@ export async function mount(root, ctx) {
     function handleScroll() {
       // Executa imediatamente (sem throttling) para resposta rápida
       checkScroll();
-      
+
       // Marca que está scrollando
       isScrolling = true;
-      
+
       // Limpa timeout anterior
       if (scrollTimeout) {
         clearTimeout(scrollTimeout);
       }
-      
+
       // Marca como parado após 150ms sem scroll
       scrollTimeout = setTimeout(function () {
         isScrolling = false;
@@ -253,17 +254,17 @@ export async function mount(root, ctx) {
       };
 
       // Verifica se mudou o estado
-      const stateChanged = !lastScrollState || 
+      const stateChanged = !lastScrollState ||
           lastScrollState.scroll !== currentState.scroll ||
           lastScrollState.shouldBeTransparent !== currentState.shouldBeTransparent ||
           Math.abs(lastScrollState.scrollValue - currentState.scrollValue) > 10; // Mudança significativa
-      
+
       if (stateChanged || isScrolling) {
         // Verifica se o estilo atual está correto
         const computedBg = window.getComputedStyle(header).backgroundColor;
         const isWhite = computedBg.includes('255') || computedBg.includes('rgb(255');
         const shouldBeWhite = scrollTop > CONFIG.scrollThreshold || !shouldBeTransparent;
-        
+
         if (shouldBeWhite) {
           // DEVERIA ser branco
           if (!header.classList.contains('header-scrolled') || !isWhite) {
@@ -277,7 +278,7 @@ export async function mount(root, ctx) {
             forceTransparentBackground();
           }
         }
-        
+
         lastScrollState = currentState;
       }
     }, 50); // Verifica a cada 50ms (mais frequente durante scroll)
@@ -339,20 +340,19 @@ export async function initBannerOverlay() {
   const OVERLAY_CONFIG = {
     enabled: true,
     onlyHomePage: true,
-    allowedPages: ['/', '/index.html', '/mah-sun-kids', '/teste', '/home-nova'],
+    // Apenas a página /mah-sun-kids pode ter overlay nos banners
+    allowedPages: ['/mah-sun-kids'],
     opacity: 0.3,
     color: '0, 0, 0',
   };
 
   function isAllowedPage() {
     const path = window.location.pathname;
+    // Normaliza o path (remove barra final e aceita query strings)
+    const normalizedPath = path.replace(/\/$/, '');
     return OVERLAY_CONFIG.allowedPages.some((allowed) => {
-      return (
-        path === allowed ||
-        path === allowed + '/' ||
-        path.startsWith(allowed + '/') ||
-        path.includes(allowed)
-      );
+      const normalizedAllowed = allowed.replace(/\/$/, '');
+      return normalizedPath === normalizedAllowed || normalizedPath.startsWith(normalizedAllowed + '?');
     });
   }
 
