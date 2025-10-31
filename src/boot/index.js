@@ -44,6 +44,16 @@ if (!window.__btInit) {
       });
       document.head.append(themePre, themeLink);
 
+      // Importar e inicializar header transparente
+      const headerModule = await import('../blocks/header.js');
+      if (typeof headerModule.mount === 'function') {
+        // Monta header (não precisa de elemento raiz específico)
+        headerModule.mount(document.body, { tenant, host });
+      }
+      if (typeof headerModule.initBannerOverlay === 'function') {
+        headerModule.initBannerOverlay();
+      }
+
       // Importar blocos (serão code-split em chunks pelo Vite)
       const faqModule = () => import('../blocks/faq.js');
       const carouselModule = () => import('../blocks/carousel.js');

@@ -1,0 +1,213 @@
+// ===== HEADER TRANSPARENTE - MAHUNKIDS =====
+export async function mount(root, ctx) {
+  'use strict';
+
+  console.log('[bt-mahsunkids] 🚀 Script de header carregado!');
+
+  // Aguarda o DOM carregar
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+
+  function init() {
+    console.log('[bt-mahsunkids] ✅ DOM carregado, iniciando header...');
+
+    const header = document.querySelector('#header-react-app');
+
+    if (!header) {
+      console.error('[bt-mahsunkids] ❌ Header não encontrado!');
+      return;
+    }
+
+    console.log('[bt-mahsunkids] ✅ Header encontrado:', header);
+
+    // ===== CONFIGURAÇÃO =====
+    const CONFIG = {
+      transparentHeader: true,
+      onlyHomePage: true,
+      allowedPages: ['/mah-sun-kids', '/teste', '/home-nova'],
+      scrollThreshold: 50,
+    };
+
+    // ===== FORÇA SUBMENUS PRETOS =====
+    function forceSubmenuColors() {
+      const elements = document.querySelectorAll(
+        '.container-menu a, .container-menu span.menu-text'
+      );
+      elements.forEach(function (el) {
+        el.classList.remove('text-cor-texto');
+        el.classList.remove('dark:text-secondary-50');
+        el.classList.remove('dark:text-secondary-300');
+        el.classList.remove('dark:hover:text-secondary-300');
+        el.style.color = '#333333';
+      });
+
+      const containers = document.querySelectorAll('.container-menu');
+      containers.forEach(function (container) {
+        container.style.backgroundColor = '#ffffff';
+      });
+    }
+
+    // ===== DETECTA PÁGINA PERMITIDA =====
+    function isAllowedPage() {
+      const path = window.location.pathname;
+      const isAllowed = CONFIG.allowedPages.some((allowed) => {
+        return (
+          path === allowed ||
+          path === allowed + '/' ||
+          path.startsWith(allowed + '/') ||
+          path.includes(allowed)
+        );
+      });
+      console.log('[bt-mahsunkids] 🔍 Página:', path, '| Permitida?', isAllowed);
+      return isAllowed;
+    }
+
+    // ===== VERIFICA SE APLICA TRANSPARENTE =====
+    function shouldApplyTransparentHeader() {
+      if (!CONFIG.transparentHeader) return false;
+      if (CONFIG.onlyHomePage) {
+        return isAllowedPage();
+      }
+      return true;
+    }
+
+    // ===== FORÇA POSITION FIXED =====
+    function ensureFixedPosition() {
+      header.style.position = 'fixed';
+      header.style.top = '0';
+      header.style.left = '0';
+      header.style.right = '0';
+      header.style.width = '100%';
+      header.style.zIndex = '999';
+    }
+
+    // ===== CONTROLE DO SCROLL =====
+    function checkScroll() {
+      ensureFixedPosition();
+
+      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+      const shouldBeTransparent = shouldApplyTransparentHeader();
+
+      console.log(
+        '[bt-mahsunkids] 📊 Scroll:',
+        scrollTop,
+        '| Deve ser transparente?',
+        shouldBeTransparent
+      );
+
+      // Se não deve ser transparente, força branco
+      if (!shouldBeTransparent) {
+        header.classList.add('header-scrolled');
+        header.style.backgroundColor = '#ffffff';
+        console.log('[bt-mahsunkids] ✅ Header BRANCO (página não permitida)');
+        return;
+      }
+
+      // Se deve ser transparente, verifica scroll
+      if (scrollTop > CONFIG.scrollThreshold) {
+        header.classList.add('header-scrolled');
+        header.style.backgroundColor = '#ffffff';
+        console.log('[bt-mahsunkids] ✅ Header BRANCO (scrolled)');
+      } else {
+        header.classList.remove('header-scrolled');
+        header.style.backgroundColor = 'transparent';
+        console.log('[bt-mahsunkids] ✅ Header TRANSPARENTE');
+      }
+    }
+
+    // ===== INICIALIZAÇÃO =====
+    ensureFixedPosition();
+    checkScroll();
+
+    // Listener de scroll
+    let ticking = false;
+    window.addEventListener('scroll', function () {
+      if (!ticking) {
+        window.requestAnimationFrame(function () {
+          checkScroll();
+          ticking = false;
+        });
+        ticking = true;
+      }
+    });
+
+    // Adiciona classe ao body
+    if (shouldApplyTransparentHeader()) {
+      document.body.classList.add('has-transparent-header');
+      console.log('[bt-mahsunkids] ✅ Classe "has-transparent-header" adicionada');
+    }
+
+    // ===== FORÇA CORES DOS SUBMENUS =====
+    const menuItems = document.querySelectorAll('#nav-root > li');
+    menuItems.forEach(function (item) {
+      item.addEventListener('mouseenter', function () {
+        setTimeout(forceSubmenuColors, 10);
+      });
+    });
+
+    setInterval(forceSubmenuColors, 1000);
+    setTimeout(forceSubmenuColors, 500);
+  }
+}
+
+// ===== BANNERS CARROSSEL (OVERLAY) =====
+export async function initBannerOverlay() {
+  console.log('[bt-mahsunkids] 🎨 Iniciando overlay de banners...');
+
+  const OVERLAY_CONFIG = {
+    enabled: true,
+    onlyHomePage: true,
+    allowedPages: ['/', '/index.html', '/mah-sun-kids', '/teste', '/home-nova'],
+    opacity: 0.3,
+    color: '0, 0, 0',
+  };
+
+  function isAllowedPage() {
+    const path = window.location.pathname;
+    return OVERLAY_CONFIG.allowedPages.some((allowed) => {
+      return (
+        path === allowed ||
+        path === allowed + '/' ||
+        path.startsWith(allowed + '/') ||
+        path.includes(allowed)
+      );
+    });
+  }
+
+  function shouldApplyOverlay() {
+    if (!OVERLAY_CONFIG.enabled) return false;
+    if (OVERLAY_CONFIG.onlyHomePage) {
+      return isAllowedPage();
+    }
+    return true;
+  }
+
+  if (!shouldApplyOverlay()) {
+    console.log('[bt-mahsunkids] ❌ Overlay não será aplicado nesta página');
+    return;
+  }
+
+  function applyOverlay() {
+    const slides = document.querySelectorAll('.bt-section-banner .swiper-slide');
+    slides.forEach(function (slide) {
+      if (!slide.querySelector('.banner-overlay')) {
+        const overlay = document.createElement('div');
+        overlay.className = 'banner-overlay';
+        overlay.style.backgroundColor = `rgba(${OVERLAY_CONFIG.color}, ${OVERLAY_CONFIG.opacity})`;
+        slide.appendChild(overlay);
+        console.log('[bt-mahsunkids] ✅ Overlay aplicado');
+      }
+    });
+  }
+
+  setTimeout(applyOverlay, 500);
+
+  const observer = new MutationObserver(applyOverlay);
+  const bannerElement = document.querySelector('.bt-section-banner');
+  if (bannerElement) {
+    observer.observe(bannerElement, { childList: true, subtree: true });
+  }
+}
