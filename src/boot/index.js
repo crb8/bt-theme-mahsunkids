@@ -1,4 +1,4 @@
-const DEV = false; // produção
+const DEV = true; // desenvolvimento
 
 // bt-boot - loader específico para Mahsunkids
 if (!window.__btInit) {
