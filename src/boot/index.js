@@ -45,13 +45,18 @@ if (!window.__btInit) {
       document.head.append(themePre, themeLink);
 
       // Importar e inicializar header transparente
+      console.log('[bt-mahsunkids] 🔄 Iniciando import do header...');
       try {
         const headerModule = await import('../blocks/header.js');
         console.log('[bt-mahsunkids] 📦 Header module carregado:', headerModule);
+        console.log('[bt-mahsunkids] 📋 Funções disponíveis:', Object.keys(headerModule));
         if (typeof headerModule.mount === 'function') {
+          console.log('[bt-mahsunkids] ✅ Função mount encontrada, executando...');
           // Monta header (não precisa de elemento raiz específico)
           await headerModule.mount(document.body, { tenant, host });
           console.log('[bt-mahsunkids] ✅ Header mount executado');
+        } else {
+          console.warn('[bt-mahsunkids] ⚠️ Função mount NÃO encontrada no módulo');
         }
         if (typeof headerModule.initBannerOverlay === 'function') {
           await headerModule.initBannerOverlay();
@@ -59,6 +64,7 @@ if (!window.__btInit) {
         }
       } catch (err) {
         console.error('[bt-mahsunkids] ❌ Erro ao carregar header:', err);
+        console.error('[bt-mahsunkids] ❌ Stack trace:', err.stack);
       }
 
       // Importar blocos (serão code-split em chunks pelo Vite)
