@@ -1,4 +1,7 @@
-const DEV = true; // desenvolvimento
+// Detectar se está em desenvolvimento (localhost ou arquivo local)
+const DEV = window.location.hostname === 'localhost' || 
+            window.location.hostname === '127.0.0.1' ||
+            window.location.protocol === 'file:';
 
 // bt-boot - loader específico para Mahsunkids
 if (!window.__btInit) {
@@ -46,6 +49,9 @@ if (!window.__btInit) {
 
       // Importar e inicializar header transparente
       console.log('[bt-mahsunkids] 🔄 Iniciando import do header...');
+      console.log('[bt-mahsunkids] 🔍 DEV mode:', DEV);
+      console.log('[bt-mahsunkids] 🔍 import.meta.url:', import.meta.url);
+      
       try {
         // ✅ IMPORTANTE: Import dinâmico com string literal para o Vite detectar durante o build
         // O Vite vai gerar: chunks/mahsunkids-header.js
@@ -55,6 +61,7 @@ if (!window.__btInit) {
 
         if (DEV) {
           // Dev: usar import relativo (string literal para Vite detectar e gerar chunk)
+          console.log('[bt-mahsunkids] 🔗 Tentando import relativo (dev mode)...');
           headerModule = await import('../blocks/header.js');
           console.log('[bt-mahsunkids] 🔗 Import relativo usado (dev mode)');
         } else {
@@ -63,11 +70,19 @@ if (!window.__btInit) {
           const headerUrl = new URL('/bt/chunks/mahsunkids-header.js', import.meta.url).href;
           console.log('[bt-mahsunkids] 🔗 URL do header (Worker):', headerUrl);
           console.log('[bt-mahsunkids] 🔗 import.meta.url base:', import.meta.url);
+          console.log('[bt-mahsunkids] 🔗 Tentando import dinâmico de:', headerUrl);
           headerModule = await import(headerUrl);
+          console.log('[bt-mahsunkids] ✅ Import dinâmico bem-sucedido!');
         }
 
         console.log('[bt-mahsunkids] 📦 Header module carregado:', headerModule);
         console.log('[bt-mahsunkids] 📋 Funções disponíveis:', Object.keys(headerModule));
+        
+        if (!headerModule) {
+          console.error('[bt-mahsunkids] ❌ Header module é null/undefined!');
+          return;
+        }
+        
         if (typeof headerModule.mount === 'function') {
           console.log('[bt-mahsunkids] ✅ Função mount encontrada, executando...');
           // Monta header (não precisa de elemento raiz específico)
@@ -75,14 +90,18 @@ if (!window.__btInit) {
           console.log('[bt-mahsunkids] ✅ Header mount executado');
         } else {
           console.warn('[bt-mahsunkids] ⚠️ Função mount NÃO encontrada no módulo');
+          console.warn('[bt-mahsunkids] ⚠️ Módulo recebido:', headerModule);
         }
+        
         if (typeof headerModule.initBannerOverlay === 'function') {
           await headerModule.initBannerOverlay();
           console.log('[bt-mahsunkids] ✅ Banner overlay inicializado');
         }
       } catch (err) {
         console.error('[bt-mahsunkids] ❌ Erro ao carregar header:', err);
+        console.error('[bt-mahsunkids] ❌ Erro message:', err.message);
         console.error('[bt-mahsunkids] ❌ Stack trace:', err.stack);
+        console.error('[bt-mahsunkids] ❌ Erro completo:', err);
       }
 
       // Importar blocos (serão code-split em chunks pelo Vite)
