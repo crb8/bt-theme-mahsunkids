@@ -64,7 +64,12 @@
   }
 
   /* ===== MENUS BRANCOS NO TOPO - APENAS MENU PRINCIPAL (NÍVEL 1) ===== */
-  body.has-transparent-header #header-react-app:not(.header-scrolled) ul#nav-root > li > a > span.menu-text {
+  body.has-transparent-header
+    #header-react-app:not(.header-scrolled)
+    ul#nav-root
+    > li
+    > a
+    > span.menu-text {
     color: #ffffff !important;
   }
 
@@ -120,7 +125,11 @@
   body.has-transparent-header #header-react-app:not(.header-scrolled) .container-menu .menu-text,
   body.has-transparent-header #header-react-app:not(.header-scrolled) .container-menu a,
   body.has-transparent-header #header-react-app:not(.header-scrolled) .container-menu span,
-  body.has-transparent-header #header-react-app:not(.header-scrolled) .container-menu a span.menu-text,
+  body.has-transparent-header
+    #header-react-app:not(.header-scrolled)
+    .container-menu
+    a
+    span.menu-text,
   body.has-transparent-header #header-react-app:not(.header-scrolled) .menu-level-2 .menu-text,
   body.has-transparent-header #header-react-app:not(.header-scrolled) .menu-level-2 a {
     color: #333333 !important;
@@ -192,4 +201,7 @@
   body.has-transparent-header .componente-id-XCTocaQYtm {
     margin-top: 67px !important;
   }
+}
+#nav-root {
+  border: solid orange 1px;
 }
