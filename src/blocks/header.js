@@ -4,24 +4,60 @@ export async function mount(root, ctx) {
 
   console.log('[bt-mahsunkids] 🚀 Script de header carregado!');
 
-  // Aguarda o DOM carregar
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
-  } else {
-    init();
+  // Função para aguardar header aparecer no DOM
+  function waitForHeader(maxAttempts = 50, interval = 100) {
+    return new Promise((resolve) => {
+      let attempts = 0;
+      const checkHeader = () => {
+        attempts++;
+        const header = document.querySelector('#header-react-app');
+        if (header) {
+          console.log('[bt-mahsunkids] ✅ Header encontrado após', attempts, 'tentativas');
+          resolve(header);
+          return;
+        }
+        if (attempts >= maxAttempts) {
+          console.error('[bt-mahsunkids] ❌ Header não encontrado após', maxAttempts, 'tentativas');
+          resolve(null);
+          return;
+        }
+        setTimeout(checkHeader, interval);
+      };
+      checkHeader();
+    });
   }
 
-  function init() {
-    console.log('[bt-mahsunkids] ✅ DOM carregado, iniciando header...');
+  // Aguarda o header aparecer e então inicializa
+  async function initWhenReady() {
+    const header = await waitForHeader();
+    if (header) {
+      init(header);
+    }
+  }
 
-    const header = document.querySelector('#header-react-app');
+  // Verifica se já está disponível ou aguarda
+  const existingHeader = document.querySelector('#header-react-app');
+  if (existingHeader) {
+    console.log('[bt-mahsunkids] ✅ Header já disponível, iniciando...');
+    init(existingHeader);
+  } else {
+    console.log('[bt-mahsunkids] ⏳ Aguardando header aparecer...');
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initWhenReady);
+    } else {
+      initWhenReady();
+    }
+  }
+
+  function init(header) {
+    console.log('[bt-mahsunkids] ✅ Iniciando configuração do header...');
 
     if (!header) {
-      console.error('[bt-mahsunkids] ❌ Header não encontrado!');
+      console.error('[bt-mahsunkids] ❌ Header não fornecido!');
       return;
     }
 
-    console.log('[bt-mahsunkids] ✅ Header encontrado:', header);
+    console.log('[bt-mahsunkids] ✅ Header recebido:', header);
 
     // ===== CONFIGURAÇÃO =====
     const CONFIG = {

@@ -45,13 +45,20 @@ if (!window.__btInit) {
       document.head.append(themePre, themeLink);
 
       // Importar e inicializar header transparente
-      const headerModule = await import('../blocks/header.js');
-      if (typeof headerModule.mount === 'function') {
-        // Monta header (não precisa de elemento raiz específico)
-        headerModule.mount(document.body, { tenant, host });
-      }
-      if (typeof headerModule.initBannerOverlay === 'function') {
-        headerModule.initBannerOverlay();
+      try {
+        const headerModule = await import('../blocks/header.js');
+        console.log('[bt-mahsunkids] 📦 Header module carregado:', headerModule);
+        if (typeof headerModule.mount === 'function') {
+          // Monta header (não precisa de elemento raiz específico)
+          await headerModule.mount(document.body, { tenant, host });
+          console.log('[bt-mahsunkids] ✅ Header mount executado');
+        }
+        if (typeof headerModule.initBannerOverlay === 'function') {
+          await headerModule.initBannerOverlay();
+          console.log('[bt-mahsunkids] ✅ Banner overlay inicializado');
+        }
+      } catch (err) {
+        console.error('[bt-mahsunkids] ❌ Erro ao carregar header:', err);
       }
 
       // Importar blocos (serão code-split em chunks pelo Vite)
