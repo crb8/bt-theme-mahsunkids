@@ -21,6 +21,4 @@
 #nav-root {
   display: flex;
   justify-content: space-between;
-  a.menu-link-48.not-has-childs {
-  }
 }
