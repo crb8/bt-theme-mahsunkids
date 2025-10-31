@@ -47,10 +47,21 @@ if (!window.__btInit) {
       // Importar e inicializar header transparente
       console.log('[bt-mahsunkids] 🔄 Iniciando import do header...');
       try {
-        // Usar caminho absoluto do Worker (como os CSS)
-        const headerUrl = new URL('/bt/chunks/mahsunkids-header.js', import.meta.url).href;
-        console.log('[bt-mahsunkids] 🔗 URL do header:', headerUrl);
-        const headerModule = await import(headerUrl);
+        // ✅ IMPORTANTE: Import dinâmico com string literal para o Vite detectar durante o build
+        // O Vite vai gerar: chunks/mahsunkids-header.js
+        // Em prod (Worker), usamos URL absoluta; em dev, o Vite resolve relativamente
+        let headerModule;
+        
+        if (!DEV && import.meta.url.includes('workers.dev')) {
+          // Prod: usar caminho absoluto do Worker (chunk já foi gerado pelo Vite)
+          const headerUrl = new URL('/bt/chunks/mahsunkids-header.js', import.meta.url).href;
+          console.log('[bt-mahsunkids] 🔗 URL do header (Worker):', headerUrl);
+          headerModule = await import(headerUrl);
+        } else {
+          // Dev: usar import relativo (string literal para Vite detectar)
+          headerModule = await import('../blocks/header.js');
+        }
+        
         console.log('[bt-mahsunkids] 📦 Header module carregado:', headerModule);
         console.log('[bt-mahsunkids] 📋 Funções disponíveis:', Object.keys(headerModule));
         if (typeof headerModule.mount === 'function') {
