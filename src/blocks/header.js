@@ -125,35 +125,54 @@ export async function mount(root, ctx) {
       // Remove qualquer estilo que possa estar forçando transparência
       header.style.removeProperty('background');
       header.style.removeProperty('background-color');
-
-      // Aplica fundo branco com !important
+      
+      // Aplica fundo branco com !important usando múltiplas propriedades
       header.style.setProperty('background-color', '#ffffff', 'important');
-
+      header.style.setProperty('background', '#ffffff', 'important');
+      
       // Também aplica no header-top se existir
       const headerTop = header.querySelector('.header-top');
       if (headerTop) {
+        headerTop.style.removeProperty('background');
+        headerTop.style.removeProperty('background-color');
         headerTop.style.setProperty('background-color', '#ffffff', 'important');
+        headerTop.style.setProperty('background', '#ffffff', 'important');
       }
-
-      // Garante que a classe está presente
-      header.classList.add('header-scrolled');
-
-      console.log('[bt-mahsunkids] ✅ Fundo branco FORÇADO');
+      
+      // Garante que a classe está presente ANTES de aplicar estilos
+      if (!header.classList.contains('header-scrolled')) {
+        header.classList.add('header-scrolled');
+      }
+      
+      // Força reflow para garantir aplicação
+      header.offsetHeight;
+      
+      console.log('[bt-mahsunkids] ✅ Fundo branco FORÇADO | Classes:', header.className);
     }
 
     // ===== FORÇA TRANSPARÊNCIA =====
     function forceTransparentBackground() {
+      // Remove background sólido
       header.style.removeProperty('background');
       header.style.setProperty('background-color', 'transparent', 'important');
-
+      header.style.setProperty('background', 'transparent', 'important');
+      
       const headerTop = header.querySelector('.header-top');
       if (headerTop) {
+        headerTop.style.removeProperty('background');
         headerTop.style.setProperty('background-color', 'transparent', 'important');
+        headerTop.style.setProperty('background', 'transparent', 'important');
       }
-
-      header.classList.remove('header-scrolled');
-
-      console.log('[bt-mahsunkids] ✅ Transparência FORÇADA');
+      
+      // Remove classe ANTES de aplicar estilos
+      if (header.classList.contains('header-scrolled')) {
+        header.classList.remove('header-scrolled');
+      }
+      
+      // Força reflow
+      header.offsetHeight;
+      
+      console.log('[bt-mahsunkids] ✅ Transparência FORÇADA | Classes:', header.className);
     }
 
     // ===== CONTROLE DO SCROLL =====
@@ -191,50 +210,77 @@ export async function mount(root, ctx) {
     ensureFixedPosition();
     checkScroll();
 
-    // Listener de scroll
-    let ticking = false;
-    window.addEventListener('scroll', function () {
-      if (!ticking) {
-        window.requestAnimationFrame(function () {
-          checkScroll();
-          ticking = false;
-        });
-        ticking = true;
+    // ===== LISTENERS DE SCROLL OTIMIZADOS =====
+    // Múltiplos listeners para garantir captura em diferentes cenários
+    let scrollTimeout = null;
+    let isScrolling = false;
+
+    function handleScroll() {
+      // Executa imediatamente (sem throttling) para resposta rápida
+      checkScroll();
+      
+      // Marca que está scrollando
+      isScrolling = true;
+      
+      // Limpa timeout anterior
+      if (scrollTimeout) {
+        clearTimeout(scrollTimeout);
       }
-    });
+      
+      // Marca como parado após 150ms sem scroll
+      scrollTimeout = setTimeout(function () {
+        isScrolling = false;
+        // Verificação final
+        checkScroll();
+      }, 150);
+    }
+
+    // Event listeners para diferentes tipos de scroll
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener('wheel', handleScroll, { passive: true });
+    window.addEventListener('touchmove', handleScroll, { passive: true });
+    document.addEventListener('scroll', handleScroll, { passive: true });
 
     // ===== PROTEÇÃO: VERIFICA PERIODICAMENTE SE O ESTILO FOI SOBRESCRITO =====
     let lastScrollState = null;
-    setInterval(function () {
+    const verificationInterval = setInterval(function () {
       const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
       const shouldBeTransparent = shouldApplyTransparentHeader();
       const currentState = {
         scroll: scrollTop > CONFIG.scrollThreshold,
         shouldBeTransparent: shouldBeTransparent,
-        expectedBg: scrollTop > CONFIG.scrollThreshold || !shouldBeTransparent ? '#ffffff' : 'transparent'
+        scrollValue: scrollTop
       };
 
-      // Só verifica se mudou o estado esperado
-      if (!lastScrollState ||
+      // Verifica se mudou o estado
+      const stateChanged = !lastScrollState || 
           lastScrollState.scroll !== currentState.scroll ||
-          lastScrollState.shouldBeTransparent !== currentState.shouldBeTransparent) {
-
+          lastScrollState.shouldBeTransparent !== currentState.shouldBeTransparent ||
+          Math.abs(lastScrollState.scrollValue - currentState.scrollValue) > 10; // Mudança significativa
+      
+      if (stateChanged || isScrolling) {
         // Verifica se o estilo atual está correto
         const computedBg = window.getComputedStyle(header).backgroundColor;
         const isWhite = computedBg.includes('255') || computedBg.includes('rgb(255');
-        const shouldBeWhite = currentState.expectedBg === '#ffffff';
-
-        if (shouldBeWhite && !isWhite && header.classList.contains('header-scrolled')) {
-          console.log('[bt-mahsunkids] 🔧 Corrigindo: fundo deveria ser branco mas não está!');
-          forceWhiteBackground();
-        } else if (!shouldBeWhite && isWhite && !header.classList.contains('header-scrolled')) {
-          console.log('[bt-mahsunkids] 🔧 Corrigindo: fundo deveria ser transparente mas não está!');
-          forceTransparentBackground();
+        const shouldBeWhite = scrollTop > CONFIG.scrollThreshold || !shouldBeTransparent;
+        
+        if (shouldBeWhite) {
+          // DEVERIA ser branco
+          if (!header.classList.contains('header-scrolled') || !isWhite) {
+            console.log('[bt-mahsunkids] 🔧 Corrigindo: fundo deveria ser branco! Scroll:', scrollTop);
+            forceWhiteBackground();
+          }
+        } else {
+          // DEVERIA ser transparente
+          if (header.classList.contains('header-scrolled') || isWhite) {
+            console.log('[bt-mahsunkids] 🔧 Corrigindo: fundo deveria ser transparente! Scroll:', scrollTop);
+            forceTransparentBackground();
+          }
         }
-
+        
         lastScrollState = currentState;
       }
-    }, 100); // Verifica a cada 100ms
+    }, 50); // Verifica a cada 50ms (mais frequente durante scroll)
 
     // ===== PROTEÇÃO: OBSERVA MUDANÇAS NO HEADER (se outros scripts modificarem) =====
     const styleObserver = new MutationObserver(function (mutations) {
