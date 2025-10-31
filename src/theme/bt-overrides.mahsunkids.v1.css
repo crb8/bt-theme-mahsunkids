@@ -24,7 +24,7 @@
   justify-content: space-between;
 }
 
-/* ===== HEADER TRANSPARENTE - MAHUNKIDS ===== */
+/* ===== HEADER TRANSPARENTE - MAHUNKIDS (CSS PURO - SEM JS) ===== */
 @media (min-width: 1024px) {
   /* ===== FORÇA HEADER FIXO (SEMPRE) ===== */
   #header-react-app,
@@ -38,51 +38,53 @@
     z-index: 999 !important;
   }
 
-  /* ===== HEADER TRANSPARENTE NO TOPO (APENAS PÁGINAS PERMITIDAS) ===== */
-  body.has-transparent-header #header-react-app:not(.header-scrolled) {
+  /* ===== HEADER TRANSPARENTE NO TOPO (CSS PURO - FUNCIONA SEM JS) ===== */
+  #header-react-app:not(.header-scrolled),
+  #header-react-app.ra-header:not(.header-scrolled),
+  body #header-react-app:not(.header-scrolled) {
     background-color: transparent !important;
-    transition: all 0.4s ease;
+    transition: background-color 0.4s ease;
   }
 
-  body.has-transparent-header #header-react-app:not(.header-scrolled) .header-top {
+  #header-react-app:not(.header-scrolled) .header-top,
+  body #header-react-app:not(.header-scrolled) .header-top {
     background-color: transparent !important;
   }
 
-  /* ===== HEADER BRANCO AO ROLAR (TODAS AS SITUAÇÕES) ===== */
-  body #header-react-app.header-scrolled,
-  body.has-transparent-header #header-react-app.header-scrolled,
+  /* ===== MENUS BRANCOS NO TOPO (CSS PURO) ===== */
+  #header-react-app:not(.header-scrolled) ul#nav-root > li > a > span.menu-text,
+  body #header-react-app:not(.header-scrolled) ul#nav-root > li > a > span.menu-text,
+  #header-react-app:not(.header-scrolled) #nav-root > li > a > span.menu-text,
+  body #header-react-app:not(.header-scrolled) #nav-root > li > a > span.menu-text {
+    color: #ffffff !important;
+  }
+
+  /* ===== ÍCONES BRANCOS NO TOPO (CSS PURO) ===== */
+  #header-react-app:not(.header-scrolled) #nav-root svg path,
+  #header-react-app:not(.header-scrolled) .acoes-header svg path,
+  #header-react-app:not(.header-scrolled) .acoes-header svg,
+  body #header-react-app:not(.header-scrolled) .acoes-header svg path,
+  body #header-react-app:not(.header-scrolled) .acoes-header svg {
+    fill: #ffffff !important;
+  }
+
+  /* ===== LOGO BRANCA NO TOPO (CSS PURO) ===== */
+  #header-react-app:not(.header-scrolled) .logo img,
+  body #header-react-app:not(.header-scrolled) .logo img {
+    filter: brightness(0) invert(1) !important;
+  }
+
+  /* ===== HEADER BRANCO AO ROLAR ===== */
+  #header-react-app.header-scrolled,
   #header-react-app.ra-header.header-scrolled,
-  #header-react-app.header-scrolled {
+  body #header-react-app.header-scrolled {
     background-color: #ffffff !important;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1) !important;
   }
 
-  body #header-react-app.header-scrolled .header-top,
-  body.has-transparent-header #header-react-app.header-scrolled .header-top,
-  #header-react-app.header-scrolled .header-top {
+  #header-react-app.header-scrolled .header-top,
+  body #header-react-app.header-scrolled .header-top {
     background-color: #ffffff !important;
-  }
-
-  /* ===== MENUS BRANCOS NO TOPO - APENAS MENU PRINCIPAL (NÍVEL 1) ===== */
-  body.has-transparent-header #header-react-app:not(.header-scrolled) ul#nav-root > li > a > span.menu-text {
-    color: #ffffff !important;
-  }
-
-  /* ===== ÍCONES BRANCOS NO TOPO (APENAS PÁGINAS PERMITIDAS) ===== */
-  body.has-transparent-header #header-react-app:not(.header-scrolled) #nav-root > li > a svg path,
-  body.has-transparent-header #header-react-app:not(.header-scrolled) #nav-root > li > a svg,
-  body.has-transparent-header #header-react-app:not(.header-scrolled) .acoes-header svg path,
-  body.has-transparent-header #header-react-app:not(.header-scrolled) .acoes-header svg,
-  body.has-transparent-header #header-react-app:not(.header-scrolled) .pesquisa-button svg path,
-  body.has-transparent-header #header-react-app:not(.header-scrolled) .minha-conta svg path,
-  body.has-transparent-header #header-react-app:not(.header-scrolled) .meus-favoritos svg path,
-  body.has-transparent-header #header-react-app:not(.header-scrolled) .carrinho-ctn svg path {
-    fill: #ffffff !important;
-  }
-
-  /* ===== LOGO BRANCA NO TOPO (APENAS PÁGINAS PERMITIDAS) ===== */
-  body.has-transparent-header #header-react-app:not(.header-scrolled) .logo img {
-    filter: brightness(0) invert(1);
   }
 
   /* ===== LOGO NORMAL AO ROLAR ===== */
@@ -103,39 +105,29 @@
 
   /* ===== SUBMENUS SEMPRE BRANCOS COM TEXTO PRETO ===== */
   #header-react-app .container-menu,
-  body #header-react-app .container-menu,
-  body.has-transparent-header #header-react-app .container-menu {
+  body #header-react-app .container-menu {
     background-color: #ffffff !important;
   }
 
-  /* FORÇA texto preto nos submenus - MÁXIMA PRIORIDADE */
+  /* FORÇA texto preto nos submenus */
   body #header-react-app .container-menu .menu-text,
   body #header-react-app .container-menu a,
   body #header-react-app .container-menu span,
-  body #header-react-app div.container-menu ul.menu-level-2 li a span.menu-text,
-  body #header-react-app div.container-menu ul li a.not-has-childs span.menu-text,
-  body.has-transparent-header #header-react-app .container-menu .menu-text,
-  body.has-transparent-header #header-react-app .container-menu a,
-  body.has-transparent-header #header-react-app .container-menu span,
-  body.has-transparent-header #header-react-app:not(.header-scrolled) .container-menu .menu-text,
-  body.has-transparent-header #header-react-app:not(.header-scrolled) .container-menu a,
-  body.has-transparent-header #header-react-app:not(.header-scrolled) .container-menu span,
-  body.has-transparent-header #header-react-app:not(.header-scrolled) .container-menu a span.menu-text,
-  body.has-transparent-header #header-react-app:not(.header-scrolled) .menu-level-2 .menu-text,
-  body.has-transparent-header #header-react-app:not(.header-scrolled) .menu-level-2 a {
+  #header-react-app .container-menu .menu-text,
+  #header-react-app .container-menu a,
+  #header-react-app .container-menu span {
     color: #333333 !important;
   }
 
-  /* Ícones dos submenus também pretos */
+  /* Ícones dos submenus pretos */
   body #header-react-app .container-menu svg path,
-  body.has-transparent-header #header-react-app .container-menu svg path,
-  body.has-transparent-header #header-react-app:not(.header-scrolled) .container-menu svg path {
+  #header-react-app .container-menu svg path {
     fill: #333333 !important;
   }
 
   /* Hover nos submenus */
   body #header-react-app .container-menu a:hover,
-  body.has-transparent-header #header-react-app .container-menu a:hover {
+  #header-react-app .container-menu a:hover {
     color: #666666 !important;
   }
 
@@ -145,34 +137,18 @@
     z-index: 10 !important;
   }
 
-  /* ===== SEM ESPAÇO NO TOPO (APENAS PÁGINAS PERMITIDAS) ===== */
-  body.has-transparent-header {
+  /* ===== SEM PADDING NO TOPO ===== */
+  body {
     padding-top: 0 !important;
   }
 
-  /* ===== BANNER EMBAIXO DO HEADER (APENAS PÁGINAS PERMITIDAS) ===== */
-  body.has-transparent-header .componente-id-XCTocaQYtm {
+  /* ===== BANNER EMBAIXO DO HEADER ===== */
+  .componente-id-XCTocaQYtm {
     margin-top: -80px !important;
   }
 
-  /* ===== OVERLAY ESCURO NOS BANNERS ===== */
-  .bt-section-banner .swiper-slide .banner-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-    z-index: 1;
-  }
-
-  .bt-section-banner .swiper-slide a {
-    position: relative;
-    z-index: 2;
-  }
-
   /* ===== GARANTIA DE TRANSPARÊNCIA ===== */
-  .ra-header.flex.w-full.flex-col.header-21.header-fixed {
+  .ra-header.flex.w-full.flex-col.header-21.header-fixed:not(.header-scrolled) {
     background-color: transparent !important;
   }
 
@@ -188,8 +164,7 @@
 }
 
 @media (max-width: 1023px) {
-  /* ===== BANNER EMBAIXO DO HEADER (APENAS PÁGINAS PERMITIDAS) ===== */
-  body.has-transparent-header .componente-id-XCTocaQYtm {
+  .componente-id-XCTocaQYtm {
     margin-top: 67px !important;
   }
 }
